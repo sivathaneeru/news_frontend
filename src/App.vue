@@ -1,6 +1,6 @@
 <template>
   <div id="app-container" :class="appClasses">
-    <Navbar v-if="isLoggedIn" @toggle-sidebar="toggleSidebar" :is-sidebar-active="isSidebarActuallyActive" />
+    <AppNavbar v-if="isLoggedIn" @toggle-sidebar="toggleSidebar" :is-sidebar-active="isSidebarActuallyActive" />
 
     <div class="main-layout-wrapper" :class="{'logged-in-layout': isLoggedIn}">
       <nav v-if="isLoggedIn" id="sidebarMenu" class="sidebar bg-light" :class="{ 'active': isSidebarActuallyActive }">
@@ -44,12 +44,12 @@
 </template>
 
 <script>
-// import AppNavbar from './components/AppNavbar.vue';
+import AppNavbar from './components/AppNavbar.vue';
 
 export default {
   name: 'App',
   components: {
-    // AppNavbar
+     AppNavbar
   },
   data() {
     return {
