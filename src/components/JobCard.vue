@@ -42,7 +42,6 @@
 
 <script>
 export default {
-  name: 'JobCard',
   props: {
     job: {
       type: Object,

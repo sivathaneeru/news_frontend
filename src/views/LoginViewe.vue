@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: 'LoginView',
+  name:"LoginView",
   data() {
     return {
       username: '',

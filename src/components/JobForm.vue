@@ -74,7 +74,6 @@
 // import { Modal } from 'bootstrap'; // Only if programmatically controlling ALL aspects
 
 export default {
-  name: 'JobFormModal',
   props: {
     jobToEdit: { // Pass a job object if editing, null for new job
       type: Object,

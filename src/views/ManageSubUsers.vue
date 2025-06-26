@@ -79,7 +79,6 @@
 import SubUserFormModal from '../components/SubUserForm.vue';
 
 export default {
-  name: 'ManageSubUsersView', // To satisfy multi-word component names rule
   components: {
     SubUserFormModal,
   },

@@ -70,7 +70,6 @@
 // import { Modal } from 'bootstrap'; // If needed for full programmatic control
 
 export default {
-  name: 'SubUserFormModal',
   props: {
     modalId: {
       type: String,

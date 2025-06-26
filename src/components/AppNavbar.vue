@@ -36,7 +36,6 @@
 
 <script>
 export default {
-  name: 'AppNavbar',
   props: {
     isSidebarActive: {
       type: Boolean,

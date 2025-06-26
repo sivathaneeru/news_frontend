@@ -92,7 +92,7 @@ import JobCard from '../components/JobCard.vue'; // Will create this component
 // import { Modal } from 'bootstrap'; // Import if using JS instance for modal
 
 export default {
-  name: 'DashboardView', // To satisfy multi-word component names rule
+  name:"DashboardView",
   components: {
     JobCard,
   },

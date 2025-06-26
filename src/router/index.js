@@ -1,14 +1,13 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import store from '../store' // Import the store
+import Vue from 'vue';
+import store from '../store'; // Import the store
 import VueRouter from 'vue-router'; // Ensuring VueRouter is imported
 
 // Lazy load components for better performance
 // Using actual filenames as confirmed by `ls`
-const LoginView = () => import(/* webpackChunkName: "login" */ '../views/Login.vue');
-const DashboardView = () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue');
-const PostJobView = () => import(/* webpackChunkName: "postjob" */ '../views/PostJob.vue');
-const ManageSubUsersView = () => import(/* webpackChunkName: "managesubusers" */ '../views/ManageSubUsers.vue');
+const Login=()=>import('../views/LoginViewe.vue');
+const Dashboard = () => import('../views/DashboardView.vue');
+const PostJobView = () => import( '../views/PostJob.vue');
+const ManageSubUsersView = () => import( '../views/ManageSubUsers.vue');
 
 Vue.use(VueRouter)
 
@@ -16,13 +15,13 @@ const routes = [
   {
     path: '/login',
     name: 'Login', // Route name can remain simpler if desired
-    component: LoginView,
+    component: Login,
     meta: { guest: true } // For redirecting logged-in users from login page
   },
   {
     path: '/dashboard',
     name: 'Dashboard', // Route name can remain simpler
-    component: DashboardView,
+    component: Dashboard,
     meta: { requiresAuth: true }
   },
   {

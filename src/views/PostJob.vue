@@ -41,7 +41,6 @@
 import JobFormModal from '../components/JobForm.vue'; // Will be created next
 
 export default {
-  name: 'PostJobView',
   components: {
     JobFormModal,
   },

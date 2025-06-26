@@ -44,12 +44,12 @@
 </template>
 
 <script>
-import AppNavbar from './components/AppNavbar.vue';
+// import AppNavbar from './components/AppNavbar.vue';
 
 export default {
   name: 'App',
   components: {
-    AppNavbar
+    // AppNavbar
   },
   data() {
     return {
