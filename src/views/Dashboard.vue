@@ -133,9 +133,11 @@ export default {
       // The modal will be shown via Bootstrap's data attributes from JobCard if that's the chosen method.
       // If JobCard emits and Dashboard shows the modal programmatically:
       const modalElement = document.getElementById('jobDetailsModal');
-      if (modalElement) {
-        const modal = new bootstrap.Modal(modalElement); // Get existing or new instance
+      if (modalElement && window.bootstrap && window.bootstrap.Modal) {
+        const modal = new window.bootstrap.Modal(modalElement); // Get existing or new instance
         modal.show();
+      } else if (!window.bootstrap || !window.bootstrap.Modal) {
+        console.error('Bootstrap Modal not found. Ensure Bootstrap JS is loaded.');
       }
     },
     formatDate(dateString) {

@@ -3,36 +3,36 @@ import VueRouter from 'vue-router'
 import store from '../store' // Import the store
 
 // Lazy load components for better performance
-const Login = () => import(/* webpackChunkName: "login" */ '../views/Login.vue');
-const Dashboard = () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue');
-const PostJob = () => import(/* webpackChunkName: "postjob" */ '../views/PostJob.vue');
-const ManageSubUsers = () => import(/* webpackChunkName: "managesubusers" */ '../views/ManageSubUsers.vue');
+const LoginView = () => import(/* webpackChunkName: "login" */ '../views/LoginView.vue');
+const DashboardView = () => import(/* webpackChunkName: "dashboard" */ '../views/DashboardView.vue');
+const PostJobView = () => import(/* webpackChunkName: "postjob" */ '../views/PostJobView.vue');
+const ManageSubUsersView = () => import(/* webpackChunkName: "managesubusers" */ '../views/ManageSubUsersView.vue');
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/login',
-    name: 'Login',
-    component: Login,
+    name: 'Login', // Route name can remain simpler if desired
+    component: LoginView,
     meta: { guest: true } // For redirecting logged-in users from login page
   },
   {
     path: '/dashboard',
-    name: 'Dashboard',
-    component: Dashboard,
+    name: 'Dashboard', // Route name can remain simpler
+    component: DashboardView,
     meta: { requiresAuth: true }
   },
   {
     path: '/post-job',
-    name: 'PostJob',
-    component: PostJob,
+    name: 'PostJob', // Route name can remain simpler
+    component: PostJobView,
     meta: { requiresAuth: true }
   },
   {
     path: '/manage-sub-users',
-    name: 'ManageSubUsers',
-    component: ManageSubUsers,
+    name: 'ManageSubUsers', // Route name can remain simpler
+    component: ManageSubUsersView,
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {

@@ -7,17 +7,17 @@
         <div class="position-sticky pt-3 sidebar-sticky">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <router-link class="nav-link" to="/dashboard" active-class="active" @click.native="closeMobileSidebar">
+              <router-link class="nav-link" to="/dashboard" active-class="active" @click="closeMobileSidebar">
                 <i class="bi bi-speedometer2"></i> Dashboard
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/post-job" active-class="active" @click.native="closeMobileSidebar">
+              <router-link class="nav-link" to="/post-job" active-class="active" @click="closeMobileSidebar">
                 <i class="bi bi-plus-square"></i> Post New Job
               </router-link>
             </li>
             <li class="nav-item" v-if="isAdmin">
-              <router-link class="nav-link" to="/manage-sub-users" active-class="active" @click.native="closeMobileSidebar">
+              <router-link class="nav-link" to="/manage-sub-users" active-class="active" @click="closeMobileSidebar">
                 <i class="bi bi-people"></i> Manage Sub-Users
               </router-link>
             </li>
@@ -44,12 +44,12 @@
 </template>
 
 <script>
-import Navbar from './components/Navbar.vue'; // Will create this component
+import AppNavbar from './components/AppNavbar.vue';
 
 export default {
   name: 'App',
   components: {
-    Navbar
+    AppNavbar
   },
   data() {
     return {
@@ -162,7 +162,7 @@ export default {
     this.updateLayoutForUser();
     window.addEventListener('resize', this.checkViewport);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.checkViewport);
   }
 };

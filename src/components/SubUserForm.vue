@@ -131,6 +131,7 @@ export default {
 
       try {
         // Destructure to avoid sending confirmPassword to the store action
+        // eslint-disable-next-line no-unused-vars
         const { confirmPassword, ...userDataToSave } = this.formData;
         const savedUser = await this.$store.actions.addSubUser(userDataToSave);
         this.$emit('sub-user-saved', savedUser);
@@ -162,17 +163,21 @@ export default {
   mounted() {
     const modalElement = this.$refs.subUserFormModal;
     if (modalElement) {
-      this.modalInstance = new bootstrap.Modal(modalElement);
-      modalElement.addEventListener('hidden.bs.modal', this.handleModalHidden);
+      if (window.bootstrap && window.bootstrap.Modal) {
+        this.modalInstance = new window.bootstrap.Modal(modalElement);
+        modalElement.addEventListener('hidden.bs.modal', this.handleModalHidden);
+      } else {
+        console.error('Bootstrap Modal not found. Ensure Bootstrap JS is loaded.');
+      }
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     const modalElement = this.$refs.subUserFormModal;
     if (modalElement) {
        modalElement.removeEventListener('hidden.bs.modal', this.handleModalHidden);
     }
     // if (this.modalInstance) {
-    //   this.modalInstance.dispose(); // Consider implications if element is not removed from DOM
+    //   // this.modalInstance.dispose(); // Consider implications
     // }
   },
 };

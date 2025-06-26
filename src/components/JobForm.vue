@@ -201,23 +201,25 @@ export default {
     if (modalElement) {
       // Ensure bootstrap is available. In a CLI project, it's usually imported.
       // For CDN, it's globally available.
-      this.modalInstance = new bootstrap.Modal(modalElement);
-      modalElement.addEventListener('hidden.bs.modal', this.handleModalHidden);
+      if (window.bootstrap && window.bootstrap.Modal) {
+        this.modalInstance = new window.bootstrap.Modal(modalElement);
+        modalElement.addEventListener('hidden.bs.modal', this.handleModalHidden);
+      } else {
+        console.error('Bootstrap Modal not found. Ensure Bootstrap JS is loaded.');
+      }
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // Clean up modal instance and event listener
+    const modalElement = this.$refs.jobFormModal;
+    if (modalElement) {
+        modalElement.removeEventListener('hidden.bs.modal', this.handleModalHidden);
+    }
     if (this.modalInstance) {
-      // modalElement.removeEventListener('hidden.bs.modal', this.handleModalHidden);
-      // Bootstrap 5 modals might not need explicit dispose if not causing issues,
-      // but it's good practice for SPAs to prevent memory leaks or conflicts.
-      // this.modalInstance.dispose();
-      // However, disposing can be tricky if the element is reused.
-      // For now, just remove listener. Parent controls if modal element is destroyed.
-       const modalElement = this.$refs.jobFormModal;
-       if (modalElement) {
-           modalElement.removeEventListener('hidden.bs.modal', this.handleModalHidden);
-       }
+      // It's generally safer to let Bootstrap handle disposal if the modal element itself might be removed by Vue's rendering.
+      // If you manually dispose, ensure the element isn't needed later by Bootstrap.
+      // For this setup, removing the event listener is the most critical part.
+      // this.modalInstance.dispose(); // Consider if needed, might conflict with Vue's DOM management
     }
   },
 };
