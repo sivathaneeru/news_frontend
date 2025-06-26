@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Find Your Dream Job</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for jobs...">
+            <button id="searchButton">Search</button>
+        </div>
+    </header>
+
+    <aside class="filters">
+        <h2>Filter By</h2>
+        <div class="filter-option">
+            <label for="locationFilter">Location:</label>
+            <select id="locationFilter">
+                <option value="">All Locations</option>
+                <option value="New York">New York</option>
+                <option value="San Francisco">San Francisco</option>
+                <option value="Remote">Remote</option>
+            </select>
+        </div>
+        <div class="filter-option">
+            <label for="jobTypeFilter">Job Type:</label>
+            <select id="jobTypeFilter">
+                <option value="">All Types</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+            </select>
+        </div>
+    </aside>
+
+    <main id="jobListingsContainer">
+        <!-- Job cards will be dynamically inserted here by JavaScript -->
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Job Board. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
