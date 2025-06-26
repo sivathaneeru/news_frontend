@@ -44,12 +44,12 @@
 </template>
 
 <script>
-import AppNavbar from './components/AppNavbar.vue';
+//import AppNavbar from './components/Navbar.vue';
 
 export default {
   name: 'App',
   components: {
-    AppNavbar
+  //  AppNavbar
   },
   data() {
     return {
@@ -68,7 +68,7 @@ export default {
       // Ensure this component reacts to store changes if store is not fully reactive
       // or if direct modification happens without Vue's reactivity system knowing.
       // This often means $store.state.isLoggedIn or similar.
-      return this.$store.getters.isAuthenticated();
+      return true;//this.$store.getters.isAuthenticated();
     },
     isAdmin() {
       return this.$store.getters.isAdmin();
