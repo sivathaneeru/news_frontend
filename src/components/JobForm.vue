@@ -154,17 +154,30 @@ export default {
         let savedJob;
         if (this.jobToEdit && this.jobToEdit.id) {
           // Placeholder for edit logic - requires store action for updating
-          // savedJob = await this.$store.actions.updateJob({ ...this.formData, id: this.jobToEdit.id });
-          // For now, we'll just simulate it by adding a new one for simplicity in this example,
-          // as update logic in the store is not yet defined.
-          // Or, emit an event for parent to handle update, then parent calls store.
-          console.warn('Update job functionality not fully implemented in store. Simulating save.');
-          savedJob = { ...this.formData, id: this.jobToEdit.id, updatedDate: new Date().toISOString() }; // Simulate update
-          this.$store.actions.addJob(savedJob); // Temp: treat as new job for demo
+          console.warn('Update job functionality not fully implemented in store. Simulating save by re-adding.');
+          // For demo, we'll just use addJob again. A real app would have updateJob.
+          // The addJob action now directly mutates state and returns the job.
+          // It's not async unless it was doing actual API calls.
+          // Our current store.addJob is synchronous.
+          savedJob = this.$store.actions.addJob({ ...this.formData, id: this.jobToEdit.id }); // Simulate update by re-adding
+          if (!savedJob && this.$store.state.currentUser) { // If addJob returned null due to no user, but we are here...
+            // This indicates an issue or that addJob should always return a promise if it can fail this way.
+            // For now, we assume addJob succeeds if currentUser is present (which it should be for this form to be used).
+          }
         } else {
-          savedJob = await this.$store.actions.addJob(this.formData);
+          // addJob is synchronous in the new store structure
+          savedJob = this.$store.actions.addJob(this.formData);
         }
-        this.$emit('job-saved', savedJob); // Emit event with saved job data
+
+        if (savedJob) { // Ensure job was actually created/processed
+          this.$emit('job-saved', savedJob);
+        } else {
+          // Handle case where savedJob might be null (e.g., addJob precondition failed silently)
+          // This might happen if currentUser somehow became null before addJob was called.
+          this.formError = "Failed to save job. User session might be invalid. Please try logging in again.";
+          this.isSubmitting = false; // Allow user to try again or cancel
+          return; // Stop further processing
+        }
         this.closeModal();
       } catch (error) {
         this.formError = error.message || 'An error occurred while saving the job post.';

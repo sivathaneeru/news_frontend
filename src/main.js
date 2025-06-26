@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router' // Will be created in a subsequent step
-import store from './store' // Will be created in a subsequent step
+import router from './router'
+import store from './store' // Import the refactored store object
 
 Vue.config.productionTip = false
 
-// Make store accessible in all components
+// Make the reactive store object accessible in all components
 Vue.prototype.$store = store;
 
 new Vue({

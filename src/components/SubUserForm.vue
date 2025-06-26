@@ -133,6 +133,7 @@ export default {
         // Destructure to avoid sending confirmPassword to the store action
         // eslint-disable-next-line no-unused-vars
         const { confirmPassword, ...userDataToSave } = this.formData;
+        // addSubUser is async and returns a Promise in the new store structure
         const savedUser = await this.$store.actions.addSubUser(userDataToSave);
         this.$emit('sub-user-saved', savedUser);
         this.closeModal();

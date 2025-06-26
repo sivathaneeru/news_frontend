@@ -1,12 +1,14 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import store from '../store'; // Import the store
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import store from '../store' // Import the store
+import VueRouter from 'vue-router'; // Ensuring VueRouter is imported
 
 // Lazy load components for better performance
-const LoginView = () => import('../views/LoginView.vue');
-const DashboardView = () => import('../views/DashboardView.vue');
-const PostJobView = () => import('../views/PostJobView.vue');
-const ManageSubUsersView = () => import( '../views/ManageSubUsersView.vue');
+// Using actual filenames as confirmed by `ls`
+const LoginView = () => import(/* webpackChunkName: "login" */ '../views/Login.vue');
+const DashboardView = () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue');
+const PostJobView = () => import(/* webpackChunkName: "postjob" */ '../views/PostJob.vue');
+const ManageSubUsersView = () => import(/* webpackChunkName: "managesubusers" */ '../views/ManageSubUsers.vue');
 
 Vue.use(VueRouter)
 

@@ -66,6 +66,7 @@ export default {
       this.loading = true;
       this.error = null;
       try {
+        // Actions are called directly, payload is the first argument
         await this.$store.actions.login({ username: this.username, password: this.password });
         this.$emit('user-logged-in'); // Emit event for App.vue to react
         this.$router.push('/dashboard');
@@ -79,7 +80,7 @@ export default {
   },
   created() {
     // If user is already logged in, redirect to dashboard
-    if (this.$store.getters.isAuthenticated()) {
+    if (this.$store.getters.isAuthenticated()) { // Getter usage remains the same
       this.$router.push('/dashboard');
     }
   }

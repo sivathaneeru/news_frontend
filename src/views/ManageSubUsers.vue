@@ -76,36 +76,40 @@
 </template>
 
 <script>
-import SubUserFormModal from '../components/SubUserForm.vue'; // Will be created next
+import SubUserFormModal from '../components/SubUserForm.vue';
 
 export default {
-  name: 'ManageSubUsersView',
+  name: 'ManageSubUsersView', // To satisfy multi-word component names rule
   components: {
     SubUserFormModal,
   },
   data() {
     return {
-      subUsers: [],
+      // subUsers: [], // Will be a computed property
       loading: false,
       showAlert: false,
       alertMessage: '',
-      alertType: 'success', // 'success' or 'error'
+      alertType: 'success',
     };
   },
   computed: {
     isAdmin() {
-      return this.$store.getters.isAdmin();
+      return this.$store.getters.isAdmin(); // Getter usage is fine
+    },
+    subUsers() {
+      // Reactive source from store via getter
+      // Filter for users created by the current admin, or all recruiters.
+      // The store's subUsers getter might be too specific if it looks for 'createdBy'.
+      // For this view, we likely want all users with 'recruiter' role.
+      return this.$store.getters.allUsers().filter(u => u.role === 'recruiter');
     }
   },
   methods: {
-    fetchSubUsers() {
+    // fetchSubUsers is no longer needed if subUsers is computed.
+    // simulateInitialLoad can be used if a loading spinner is desired.
+    simulateInitialLoad() {
       this.loading = true;
-      // Simulate API call
       setTimeout(() => {
-        // Filter for users created by the current admin, or all recruiters if that's the logic
-        // For simplicity, using the store's 'subUsers' getter which assumes 'recruiter' role
-        // and potentially a 'createdBy' field.
-        this.subUsers = this.$store.getters.allUsers().filter(u => u.role === 'recruiter');
         this.loading = false;
       }, 300);
     },
@@ -122,7 +126,7 @@ export default {
       this.alertType = 'success';
       this.alertMessage = `Sub-user "${userData.username}" has been created successfully.`;
       this.showAlert = true;
-      this.fetchSubUsers(); // Refresh the list
+      // this.fetchSubUsers(); // No longer needed, computed property will update
     },
     handleSubUserSaveError(errorMessage) {
       this.alertType = 'error';
@@ -142,7 +146,8 @@ export default {
       // Route guards should prevent non-admins from accessing.
       console.warn("Non-admin accessed ManageSubUsers page. This should be prevented by route guard.");
     }
-    this.fetchSubUsers();
+    // this.fetchSubUsers(); // Replaced by computed and simulateInitialLoad
+    this.simulateInitialLoad();
   },
 };
 </script>

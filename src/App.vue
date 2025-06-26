@@ -44,12 +44,12 @@
 </template>
 
 <script>
-//import AppNavbar from './components/Navbar.vue';
+import AppNavbar from './components/AppNavbar.vue';
 
 export default {
   name: 'App',
   components: {
-  //  AppNavbar
+    AppNavbar
   },
   data() {
     return {
@@ -65,13 +65,16 @@ export default {
   },
   computed: {
     isLoggedIn() {
-      // Ensure this component reacts to store changes if store is not fully reactive
-      // or if direct modification happens without Vue's reactivity system knowing.
-      // This often means $store.state.isLoggedIn or similar.
-      return true;//this.$store.getters.isAuthenticated();
+      // Accessing getter from the new store structure
+      return this.$store.getters.isAuthenticated();
     },
     isAdmin() {
+      // Accessing getter from the new store structure
       return this.$store.getters.isAdmin();
+    },
+    // Reactive access to state for UI updates
+    currentUserForWatch() {
+      return this.$store.state.currentUser;
     },
     isSidebarActuallyActive() {
       // Determines if the sidebar should be visually active
@@ -103,17 +106,14 @@ export default {
       }
     },
     onUserLoggedIn() {
-      // this.isLoggedIn = true; // Handled by computed property reacting to store
-      // this.isAdmin = this.$store.getters.isAdmin(); // Handled by computed property
+      // No direct state mutation here, computed isLoggedIn/isAdmin will react
       this.updateLayoutForUser();
     },
     onUserLoggedOut() {
-      // this.isLoggedIn = false; // Handled by computed property
-      // this.isAdmin = false; // Handled by computed property
-      this.$store.actions.logout(); // Ensure store is updated
-      this.sidebarOpenOnMobile = false; // Close mobile sidebar on logout
-      // Desktop sidebar preference (sidebarOpenOnDesktop) can be maintained or reset
-      // this.sidebarOpenOnDesktop = true; // Optional: reset to default for next login
+      this.$store.actions.logout(); // This will update $store.state.currentUser
+      // Computed properties isLoggedIn/isAdmin will react to this change.
+      this.sidebarOpenOnMobile = false;
+      // this.sidebarOpenOnDesktop = true;
       if (this.$router.currentRoute.path !== '/login') {
         this.$router.push('/login');
       }
@@ -146,20 +146,29 @@ export default {
     '$route'() {
       this.closeMobileSidebar();
     },
-    isLoggedIn(loggedIn) {
-       if(loggedIn) {
-        this.updateLayoutForUser();
-       } else {
-        // Reset sidebar states if needed when logging out
-        this.sidebarOpenOnMobile = false;
-       }
+    // Watch the reactive currentUser from the store's state
+    currentUserForWatch: {
+      handler(newUser) {
+        // this.isLoggedIn and this.isAdmin are computed properties, they will update automatically.
+        // This watcher is mainly to trigger component methods like updateLayoutForUser if needed,
+        // or to react to the presence/absence of a user.
+        if (newUser) {
+          this.updateLayoutForUser();
+        } else {
+          // User logged out
+          this.sidebarOpenOnMobile = false;
+          // Potentially redirect if not on login page, though router guards should handle this
+           if (this.$router.currentRoute.path !== '/login') {
+             // this.$router.push('/login'); // router guard handles this
+           }
+        }
+      },
+      deep: true, // If currentUser is an object and we need to react to its property changes
+      immediate: true // Run handler immediately with current value
     }
   },
   created() {
-    // Initialize reactive data from store
-    // this.isLoggedIn = this.$store.getters.isAuthenticated();
-    // this.isAdmin = this.$store.getters.isAdmin();
-    this.updateLayoutForUser();
+    this.updateLayoutForUser(); // Initial layout check
     window.addEventListener('resize', this.checkViewport);
   },
   beforeUnmount() {

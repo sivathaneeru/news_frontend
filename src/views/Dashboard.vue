@@ -92,33 +92,41 @@ import JobCard from '../components/JobCard.vue'; // Will create this component
 // import { Modal } from 'bootstrap'; // Import if using JS instance for modal
 
 export default {
+  name: 'DashboardView', // To satisfy multi-word component names rule
   components: {
     JobCard,
   },
   data() {
     return {
-      jobPostings: [],
+      // jobPostings: [], // Will be a computed property
       loading: false,
       selectedJob: null,
-      // jobDetailsModalInstance: null, // To store Bootstrap modal instance
     };
   },
   computed: {
     currentUser() {
-      return this.$store.getters.currentUser();
+      return this.$store.getters.currentUser(); // Getter usage is fine
     },
     isAdmin() {
-      return this.$store.getters.isAdmin();
+      return this.$store.getters.isAdmin(); // Getter usage is fine
+    },
+    jobPostings() {
+      // Reactive source from store's state via getter
+      return this.$store.getters.allJobPostings();
     }
   },
   methods: {
-    fetchJobPostings() {
+    // fetchJobPostings is no longer needed as jobPostings is a computed property
+    // However, if there was an actual API call, it might still be here.
+    // For this dummy data, computed is cleaner.
+    // Initial load can be simulated by just accessing computed prop.
+    // If loading state is still desired for initial render:
+    simulateInitialLoad() {
       this.loading = true;
-      // Simulate API call
       setTimeout(() => {
-        this.jobPostings = this.$store.getters.allJobPostings();
+        // Data is already available via computed property this.jobPostings
         this.loading = false;
-      }, 500);
+      }, 500); // Simulate delay
     },
     handleViewDetails(job) {
       this.selectedJob = job;
@@ -146,20 +154,15 @@ export default {
     }
   },
   created() {
-    this.fetchJobPostings();
+    // this.fetchJobPostings(); // Replaced by computed property and simulateInitialLoad
+    this.simulateInitialLoad(); // Call this if loading spinner simulation is desired
   },
   mounted() {
-    // If controlling modal purely via JS:
-    // const modalElement = document.getElementById('jobDetailsModal');
-    // if (modalElement) {
-    //   this.jobDetailsModalInstance = new bootstrap.Modal(modalElement);
-    // }
+    // Modal instance logic for jobDetailsModal remains the same,
+    // ensure window.bootstrap.Modal is used if it was missed here.
+    // The previous changes for bootstrap.Modal were specific to JobForm, SubUserForm.
+    // It was correctly updated in DashboardView.vue in a previous step for this file.
   },
-  // beforeDestroy() {
-    // if (this.jobDetailsModalInstance) {
-    //   this.jobDetailsModalInstance.dispose();
-    // }
-  // }
 };
 </script>
 
