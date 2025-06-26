@@ -8,45 +8,53 @@ const Login=()=>import('../views/LoginView.vue');
 const Dashboard = () => import('../views/DashboardView.vue');
 const PostJobView = () => import( '../views/PostJob.vue');
 const ManageSubUsersView = () => import( '../views/ManageSubUsers.vue');
+const PublicJobListView = () => import('../views/PublicJobListView.vue'); // Corrected path
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/login',
-    name: 'Login', // Route name can remain simpler if desired
+    name: 'Login',
     component: Login,
-    meta: { guest: true } // For redirecting logged-in users from login page
+    meta: { guest: true }
+  },
+  {
+    path: '/jobs', // New public route for job listings
+    name: 'PublicJobList',
+    component: PublicJobListView, // Initially points to DashboardView as a placeholder
+    meta: { guest: true } // Allow guest access
   },
   {
     path: '/dashboard',
-    name: 'Dashboard', // Route name can remain simpler
+    name: 'Dashboard',
     component: Dashboard,
     meta: { requiresAuth: true }
   },
   {
     path: '/post-job',
-    name: 'PostJob', // Route name can remain simpler
+    name: 'PostJob',
     component: PostJobView,
     meta: { requiresAuth: true }
   },
   {
     path: '/manage-sub-users',
-    name: 'ManageSubUsers', // Route name can remain simpler
+    name: 'ManageSubUsers',
     component: ManageSubUsersView,
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: '/', // Default path
     redirect: () => {
-      // Redirect to dashboard if logged in, else to login
-      return store.getters.isAuthenticated() ? '/dashboard' : '/login';
+      // Redirect to dashboard if logged in, else to the new public jobs page
+      return store.getters.isAuthenticated() ? '/dashboard' : '/jobs';
     }
   },
   {
     path: '*', // Catch-all for 404, redirect to a sensible default
     redirect: () => {
-      return store.getters.isAuthenticated() ? '/dashboard' : '/login';
+      // Redirect to dashboard if logged in, else to the new public jobs page
+      return store.getters.isAuthenticated() ? '/dashboard' : '/jobs';
     }
   }
 ]

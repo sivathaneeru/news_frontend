@@ -21,17 +21,15 @@
           class="btn btn-outline-primary w-100"
           @click="viewDetails"
           data-bs-toggle="modal"
-          data-bs-target="#jobDetailsModal"
+          :data-bs-target="detailsModalId"
         >
           <i class="bi bi-eye-fill"></i> View Details
         </button>
-        <!-- Future actions like Edit/Delete for admin/owner -->
-        <!--
-        <div v-if="canManage" class="mt-2 d-flex justify-content-end">
-          <button class="btn btn-sm btn-outline-secondary me-2"><i class="bi bi-pencil"></i> Edit</button>
-          <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+
+        <div v-if="showEditDelete && canManage" class="mt-2 d-flex justify-content-end">
+          <button class="btn btn-sm btn-outline-secondary me-2" @click="editJob"><i class="bi bi-pencil"></i> Edit</button>
+          <button class="btn btn-sm btn-outline-danger" @click="deleteJob"><i class="bi bi-trash"></i> Delete</button>
         </div>
-        -->
       </div>
     </div>
     <div class="card-footer bg-transparent border-top-0">
@@ -47,14 +45,25 @@ export default {
       type: Object,
       required: true,
     },
+    showEditDelete: {
+      type: Boolean,
+      default: true,
+    },
+    detailsModalId: {
+      type: String,
+      default: '#jobDetailsModal',
+    }
   },
   computed: {
-    // Example: Check if current user can manage this job post
-    // canManage() {
-    //   const currentUser = this.$store.getters.currentUser();
-    //   if (!currentUser) return false;
-    //   return currentUser.isAdmin() || currentUser.username === this.job.postedBy;
-    // }
+    canManage() {
+      const currentUser = this.$store.getters.currentUser ? this.$store.getters.currentUser() : null;
+      if (!currentUser) return false;
+
+      // Check if isAdmin getter exists and works
+      const isAdmin = typeof this.$store.getters.isAdmin === 'function' ? this.$store.getters.isAdmin() : false;
+
+      return isAdmin || (currentUser.username === this.job.postedBy);
+    }
   },
   methods: {
     truncateDescription(text, length) {
@@ -65,6 +74,14 @@ export default {
     },
     viewDetails() {
       this.$emit('view-details', this.job);
+    },
+    editJob() {
+      this.$emit('edit-job', this.job);
+      // console.log('Attempting to edit job:', this.job.id);
+    },
+    deleteJob() {
+      this.$emit('delete-job', this.job.id);
+      // console.log('Attempting to delete job:', this.job.id);
     },
     timeSince(dateString) {
       if (!dateString) return '';

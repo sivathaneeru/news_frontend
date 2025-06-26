@@ -40,7 +40,13 @@
             <div v-else class="row gy-4">
               <!-- JobCard components will be rendered here -->
               <div v-for="job in jobPostings" :key="job.id" class="col-md-6 col-lg-4">
-                <JobCard :job="job" @view-details="handleViewDetails" />
+                <JobCard
+                  :job="job"
+                  @view-details="handleViewDetails"
+                  details-modal-id="#jobDetailsModal"
+                  @edit-job="handleEditJob"
+                  @delete-job="handleDeleteJob"
+                />
               </div>
             </div>
           </div>
@@ -151,6 +157,30 @@ export default {
       if (!dateString) return 'N/A';
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       return new Date(dateString).toLocaleDateString(undefined, options);
+    },
+    handleEditJob(job) {
+      // Placeholder for edit functionality
+      // Typically, this would navigate to a JobForm component with the job ID
+      // or open a modal pre-filled with job data.
+      console.log('Dashboard: Edit job requested:', job);
+      this.$router.push({ name: 'PostJob', query: { jobId: job.id } }); // Example navigation
+    },
+    handleDeleteJob(jobId) {
+      // Placeholder for delete functionality
+      // This would typically involve a confirmation dialog and then a store action
+      console.log('Dashboard: Delete job requested:', jobId);
+      if (confirm(`Are you sure you want to delete this job post?`)) {
+        this.$store.dispatch('deleteJobPosting', jobId)
+          .then(() => {
+            // Optionally, show a success message
+            console.log('Job posting deleted successfully');
+            // The list should reactively update as it's based on store getter
+          })
+          .catch(error => {
+            console.error('Error deleting job posting:', error);
+            // Optionally, show an error message to the user
+          });
+      }
     }
   },
   created() {
