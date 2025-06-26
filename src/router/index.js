@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'; // Ensuring VueRouter is imported
 
 // Lazy load components for better performance
 // Using actual filenames as confirmed by `ls`
-const Login=()=>import('../views/LoginViewe.vue');
+const Login=()=>import('../views/LoginView.vue');
 const Dashboard = () => import('../views/DashboardView.vue');
 const PostJobView = () => import( '../views/PostJob.vue');
 const ManageSubUsersView = () => import( '../views/ManageSubUsers.vue');
