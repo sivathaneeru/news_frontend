@@ -9,6 +9,7 @@ const Dashboard = () => import('../views/DashboardView.vue');
 const PostJobView = () => import( '../views/PostJob.vue');
 const ManageSubUsersView = () => import( '../views/ManageSubUsers.vue');
 const PublicJobListView = () => import('../views/PublicJobListView.vue'); // Corrected path
+const CompanyProfileView = () => import('../views/CompanyProfileView.vue'); // Import Company Profile View
 
 Vue.use(VueRouter)
 
@@ -42,6 +43,15 @@ const routes = [
     name: 'ManageSubUsers',
     component: ManageSubUsersView,
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/company/:companyId',
+    name: 'CompanyProfile',
+    component: CompanyProfileView,
+    props: true, // Pass route params as props to the component
+    // meta: { guest: true } // Or requiresAuth: true, depending on if profiles are public
+                           // For now, let's assume they are public (guest: true)
+    meta: { guest: true } // Allowing guest access for now
   },
   {
     path: '/', // Default path

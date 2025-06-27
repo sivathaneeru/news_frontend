@@ -42,3 +42,21 @@ export const UserService = {
 
 // You can export more services as they are created
 // export const AnotherService = { ... };
+
+export const CompanyService = {
+  getCompanyById: (companyId) => {
+    const endpoint = { ...API_ENDPOINTS.GET_COMPANY_BY_ID };
+    endpoint.url = endpoint.url.replace(':id', companyId);
+    return ajaxRequest(endpoint, { id: companyId });
+  },
+  getJobsByCompanyId: (companyId) => {
+    const endpoint = { ...API_ENDPOINTS.GET_JOBS_BY_COMPANY_ID };
+    endpoint.url = endpoint.url.replace(':id', companyId);
+    return ajaxRequest(endpoint, { id: companyId });
+  },
+  // getCompanyByAdminUsername - can be added if needed:
+  // getCompanyByAdminUsername: (username) => {
+  //   const endpoint = { ...API_ENDPOINTS.GET_COMPANY_BY_ADMIN_USERNAME }; // Requires new mapping
+  //   return ajaxRequest(endpoint, { username });
+  // }
+};

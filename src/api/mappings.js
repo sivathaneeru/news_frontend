@@ -28,5 +28,13 @@ export const API_ENDPOINTS = {
     method: 'POST',
     url: '/api/users/sub',
   },
+  GET_COMPANY_BY_ID: {
+    method: 'GET',
+    url: '/api/companies/:id',
+  },
+  GET_JOBS_BY_COMPANY_ID: {
+    method: 'GET',
+    url: '/api/companies/:id/jobs',
+  },
   // Add other endpoints as needed
 };

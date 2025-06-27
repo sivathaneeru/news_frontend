@@ -79,7 +79,13 @@
               </div>
             </div>
              <p class="mt-3 text-muted small">
-              Posted on: {{ formatDate(selectedJob.datePosted) }} by {{ selectedJob.postedBy }}
+              Posted on: {{ formatDate(selectedJob.datePosted) }} by
+              <router-link v-if="selectedJob.companyId && selectedJob.companyName" :to="{ name: 'CompanyProfile', params: { companyId: selectedJob.companyId } }" class="text-decoration-none">
+                {{ selectedJob.companyName }}
+              </router-link>
+              <span v-else>
+                {{ selectedJob.postedBy }} <!-- Fallback to username if no company info -->
+              </span>
             </p>
           </div>
           <div class="modal-footer">

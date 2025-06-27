@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { JobService, AuthService, UserService } from '../api/services'; // Import new services
+import { JobService, AuthService, UserService, CompanyService } from '../api/services'; // Import new services
 
 // --- State ---
 // Make the state observable
@@ -11,9 +11,13 @@ const state = Vue.observable({
     { id: 3, username: 'recruiter2', password: 'password', role: 'recruiter' },
   ],
   jobPostings: [], // Will be fetched from the dummy API
+  companies: [], // For storing a list of companies, if needed elsewhere
+  currentCompany: null, // For storing details of a single viewed company
+  currentCompanyJobs: [], // For storing jobs of the currently viewed company
   nextJobId: 4, // Kept if local creation still happens or as a fallback
   nextUserId: 4, // Kept for local user creation
   isLoadingJobs: false,
+  isLoadingCompany: false,
 });
 
 // --- Getters ---
@@ -37,29 +41,63 @@ const getters = {
     return state.users.filter(user => user.role === 'recruiter' && user.createdBy === 'admin');
   },
   allJobPostings: () => {
-    // Returns jobPostings from state, which will be populated by an action.
-    // Sorting remains here as a presentation concern for the getter.
-    return state.jobPostings.sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted));
+    // Sort by featured status first (premium), then by datePosted
+    return [...state.jobPostings].sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      return new Date(b.datePosted) - new Date(a.datePosted);
+    });
   },
   isLoadingJobs: () => {
     return state.isLoadingJobs;
+  },
+  isLoadingCompany: () => {
+    return state.isLoadingCompany;
+  },
+  getCurrentCompanyDetails: () => {
+    return state.currentCompany;
+  },
+  getCurrentCompanyJobs: () => {
+    // Sort by featured status first (premium), then by datePosted
+    return [...state.currentCompanyJobs].sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+      return new Date(b.datePosted) - new Date(a.datePosted);
+    });
   }
 };
 
 // --- Actions / Mutations ---
 const actions = {
-  // Example: Fetching job postings using the new service
-  fetchJobPostings: async () => {
+  fetchJobPostings: async () => { // This fetches ALL job postings
     state.isLoadingJobs = true;
     try {
       const jobs = await JobService.getAllJobPostings();
-      state.jobPostings = jobs; // Update state with fetched jobs
+      state.jobPostings = jobs;
     } catch (error) {
-      console.error('Error fetching job postings:', error);
-      // Handle error appropriately (e.g., set an error state)
-      state.jobPostings = []; // Clear jobs or keep stale, depending on UX choice
+      console.error('Error fetching all job postings:', error);
+      state.jobPostings = [];
     } finally {
       state.isLoadingJobs = false;
+    }
+  },
+
+  fetchCompanyById: async (companyId) => {
+    state.isLoadingCompany = true;
+    state.currentCompany = null; // Reset before fetching
+    state.currentCompanyJobs = []; // Reset jobs for the company
+    try {
+      const companyDetails = await CompanyService.getCompanyById(companyId);
+      state.currentCompany = companyDetails;
+      // After fetching company details, fetch its jobs
+      const companyJobs = await CompanyService.getJobsByCompanyId(companyId);
+      state.currentCompanyJobs = companyJobs;
+    } catch (error) {
+      console.error(`Error fetching company details for ${companyId}:`, error);
+      state.currentCompany = null;
+      state.currentCompanyJobs = [];
+    } finally {
+      state.isLoadingCompany = false;
     }
   },
 

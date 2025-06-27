@@ -53,6 +53,26 @@
                 <input type="text" class="form-control" id="jobSalary" v-model.trim="formData.salary" placeholder="e.g., $100,000 - $120,000 or Competitive">
               </div>
             </div>
+
+            <hr class="my-4">
+
+            <div class="mb-3">
+              <h6 class="mb-3"><i class="bi bi-gem me-1"></i>Posting Tier</h6>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="jobTier" id="freeTier" value="free" v-model="formData.tier" checked>
+                <label class="form-check-label" for="freeTier">
+                  <strong>Free Tier</strong> - Standard visibility (30 days)
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="jobTier" id="premiumTier" value="premium" v-model="formData.tier">
+                <label class="form-check-label" for="premiumTier">
+                  <strong>Premium Tier</strong> - <span class="badge bg-warning text-dark me-1"><i class="bi bi-star-fill"></i> Featured</span> Higher visibility, top placement (60 days)
+                  <span class="text-success fw-bold ms-2">($10.00 Mock Price)</span>
+                </label>
+              </div>
+            </div>
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="closeModal">
@@ -93,6 +113,7 @@ export default {
         experience: '',
         type: '', // Default to empty, user must select
         salary: '',
+        tier: 'free', // Default to free tier
       },
       isSubmitting: false,
       formError: null,
@@ -134,6 +155,7 @@ export default {
         experience: '',
         type: '',
         salary: '',
+        tier: 'free', // Reset tier to free
       };
       this.formError = null;
       this.isSubmitting = false;
@@ -149,35 +171,43 @@ export default {
         return;
       }
 
+      // Tier-specific logic
+      if (this.formData.tier === 'premium') {
+        // Simulate payment confirmation for premium tier
+        const paymentConfirmed = confirm("You've selected the Premium Tier for $10.00. Click OK to simulate successful payment and proceed.");
+        if (!paymentConfirmed) {
+          this.isSubmitting = false;
+          return; // User cancelled payment
+        }
+        // In a real app, here you would integrate with a payment gateway.
+        // For now, we just log it and proceed.
+        console.log("Mock payment successful for Premium Tier.");
+      }
+
       try {
-        let savedJob;
+        // The addJob action in the store is now async because JobService methods are async.
+        // We should await its resolution.
+        let jobPayload = { ...this.formData };
+
         if (this.jobToEdit && this.jobToEdit.id) {
-          // Placeholder for edit logic - requires store action for updating
-          console.warn('Update job functionality not fully implemented in store. Simulating save by re-adding.');
-          // For demo, we'll just use addJob again. A real app would have updateJob.
-          // The addJob action now directly mutates state and returns the job.
-          // It's not async unless it was doing actual API calls.
-          // Our current store.addJob is synchronous.
-          savedJob = this.$store.actions.addJob({ ...this.formData, id: this.jobToEdit.id }); // Simulate update by re-adding
-          if (!savedJob && this.$store.state.currentUser) { // If addJob returned null due to no user, but we are here...
-            // This indicates an issue or that addJob should always return a promise if it can fail this way.
-            // For now, we assume addJob succeeds if currentUser is present (which it should be for this form to be used).
-          }
+          jobPayload.id = this.jobToEdit.id; // Ensure ID is included for updates
+          // NOTE: The current store doesn't have an 'updateJob' action.
+          // For this feature, we'll focus on 'addJob'.
+          // A proper 'updateJob' would be needed for editing premium features.
+          // For now, if editing, it might just re-add or error if not handled by addJob.
+          // The existing `addJob` will effectively overwrite if ID is the same due to how dummy API works.
+          // This is acceptable for now for the mock.
+          console.warn('Update job functionality with premium tiers might require a dedicated update action in the store.');
+          await this.$store.dispatch('addJob', jobPayload); // Assuming addJob can handle updates or it's a new job
         } else {
-          // addJob is synchronous in the new store structure
-          savedJob = this.$store.actions.addJob(this.formData);
+          await this.$store.dispatch('addJob', jobPayload);
         }
 
-        if (savedJob) { // Ensure job was actually created/processed
-          this.$emit('job-saved', savedJob);
-        } else {
-          // Handle case where savedJob might be null (e.g., addJob precondition failed silently)
-          // This might happen if currentUser somehow became null before addJob was called.
-          this.formError = "Failed to save job. User session might be invalid. Please try logging in again.";
-          this.isSubmitting = false; // Allow user to try again or cancel
-          return; // Stop further processing
-        }
+        // No direct 'savedJob' return from dispatch, success is implied if no error.
+        // The store action 'fetchJobPostings' is called within 'addJob' or 'deleteJob' to update the list.
+        this.$emit('job-saved', jobPayload); // Emit with the data sent
         this.closeModal();
+
       } catch (error) {
         this.formError = error.message || 'An error occurred while saving the job post.';
         console.error("Error saving job:", error);
@@ -188,7 +218,10 @@ export default {
     openModal() {
       this.resetForm(); // Reset form when opening for a new job, or repopulate if editing
       if (this.jobToEdit) {
-         this.formData = { ...this.jobToEdit };
+         // Ensure tier is also part of the editing payload if it exists
+         this.formData = { ...this.jobToEdit, tier: this.jobToEdit.tier || 'free' };
+      } else {
+        this.formData.tier = 'free'; // Default to free for new jobs
       }
       if (this.modalInstance) {
         this.modalInstance.show();

@@ -1,11 +1,16 @@
 <template>
-  <div class="card h-100 shadow-sm job-card">
+  <div class="card h-100 shadow-sm job-card" :class="{ 'border-warning border-2': job.isFeatured }">
     <div class="card-body d-flex flex-column">
-      <h5 class="card-title text-primary">
-        <i class="bi bi-briefcase card-title-icon"></i> {{ job.title }}
-      </h5>
+      <div class="d-flex justify-content-between align-items-start">
+        <h5 class="card-title text-primary mb-1">
+          <i class="bi bi-briefcase card-title-icon"></i> {{ job.title }}
+        </h5>
+        <span v-if="job.isFeatured" class="badge bg-warning text-dark ms-2 animate__animated animate__flash animate__slower animate__infinite">
+          <i class="bi bi-star-fill"></i> Featured
+        </span>
+      </div>
       <p class="card-subtitle mb-2 text-muted">
-        <i class="bi bi-geo-alt"></i> {{ job.location }}
+        <i class="bi bi-geo-alt"></i> {{ job.location }} &bull; <span :class="daysRemainingColor(job.listingEndDate)"><i class="bi bi-calendar-check"></i> {{ daysRemaining(job.listingEndDate) }}</span>
       </p>
       <p class="card-text description-truncate flex-grow-1">
         {{ truncateDescription(job.description, 120) }}
@@ -14,7 +19,7 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
           <span class="badge bg-secondary">{{ job.type }}</span>
           <span class="text-muted small">
-            <i class="bi bi-clock-history"></i> {{ timeSince(job.datePosted) }}
+            <i class="bi bi-clock-history"></i> Posted: {{ timeSince(job.datePosted) }}
           </span>
         </div>
         <button
@@ -33,7 +38,17 @@
       </div>
     </div>
     <div class="card-footer bg-transparent border-top-0">
-        <small class="text-muted">Posted by: {{ job.postedBy }}</small>
+        <small class="text-muted">
+          <span v-if="job.companyId && job.companyName">
+            Posted by:
+            <router-link :to="{ name: 'CompanyProfile', params: { companyId: job.companyId } }" class="text-decoration-none">
+              {{ job.companyName }}
+            </router-link>
+          </span>
+          <span v-else>
+            Posted by: {{ job.postedBy }}
+          </span>
+        </small>
     </div>
   </div>
 </template>
@@ -109,6 +124,28 @@ export default {
         return Math.floor(interval) + " minutes ago";
       }
       return Math.floor(seconds) + " seconds ago";
+    },
+    daysRemaining(endDateString) {
+      if (!endDateString) return 'N/A';
+      const endDate = new Date(endDateString);
+      const now = new Date();
+      const diffTime = endDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 0) return 'Expired';
+      if (diffDays === 1) return '1 day left';
+      return `${diffDays} days left`;
+    },
+    daysRemainingColor(endDateString) {
+      if (!endDateString) return 'text-muted';
+      const endDate = new Date(endDateString);
+      const now = new Date();
+      const diffTime = endDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 0) return 'text-danger fw-bold';
+      if (diffDays <= 7) return 'text-warning';
+      return 'text-success';
     }
   },
 };
