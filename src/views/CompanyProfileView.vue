@@ -95,6 +95,7 @@
 
 <script>
 import JobCard from '../components/JobCard.vue';
+import store from '../store'; // Import the store directly
 // import { Modal } from 'bootstrap'; // Needed if controlling modal programmatically
 
 export default {
@@ -116,21 +117,21 @@ export default {
   },
   computed: {
     isLoading() {
-      return this.$store.getters.isLoadingCompany();
+      return store.getters.isLoadingCompany();
     },
     company() {
-      return this.$store.getters.getCurrentCompanyDetails();
+      return store.getters.getCurrentCompanyDetails();
     },
     jobs() {
       // If currentCompanyJobs is populated directly by fetchCompanyById action
-      return this.$store.getters.getCurrentCompanyJobs();
+      return store.getters.getCurrentCompanyJobs();
       // Alternative: Filter from all jobs if not fetched separately for the company
-      // return this.$store.getters.allJobPostings().filter(job => job.companyId === this.companyId);
+      // return store.getters.allJobPostings().filter(job => job.companyId === this.companyId);
     },
   },
   methods: {
     fetchCompanyData() {
-      this.$store.dispatch('fetchCompanyById', this.companyId);
+      store.actions.fetchCompanyById(this.companyId); // Use store.actions directly
     },
     handleViewJobDetails(job) {
       this.selectedJob = job;
