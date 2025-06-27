@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     fetchJobs() { // Method to dispatch the action
-      this.$store.actions.fetchJobPostings();
+      this.$store.dispatch('fetchJobPostings');
     },
     // simulateInitialLoad() { // Replaced by fetchJobs and store's loading state
     // },

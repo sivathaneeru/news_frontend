@@ -153,8 +153,7 @@ export default {
   },
   watch: {
     companyId(newId) {
-      console.log(newId);
-      // Refetch if the compa;nyId prop changes (e.g., navigating between company profiles)
+      // Refetch if the companyId prop changes (e.g., navigating between company profiles)
       this.fetchCompanyData();
     },
   },

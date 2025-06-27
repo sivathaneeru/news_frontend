@@ -41,8 +41,9 @@
         <small class="text-muted">
           <span v-if="job.companyId && job.companyName">
             Posted by:
-            <router-link :to="{ name: 'CompanyProfile', params: { companyId: job.companyId } }" class="text-decoration-none">
-              {{ job.companyName }}
+            <!-- Using computed property for :to for easier debugging -->
+            <router-link :to="jobDataForLink" class="text-decoration-none company-link">
+              {{ job.companyName }} (ID: {{job.companyId}})
             </router-link>
           </span>
           <span v-else>
@@ -78,7 +79,19 @@ export default {
       const isAdmin = typeof this.$store.getters.isAdmin === 'function' ? this.$store.getters.isAdmin() : false;
 
       return isAdmin || (currentUser.username === this.job.postedBy);
+    },
+    // For debugging the router-link
+    jobDataForLink() {
+      // console.log('JobCard job object:', JSON.parse(JSON.stringify(this.job)));
+      return {
+        name: 'CompanyProfile',
+        params: { companyId: this.job.companyId }
+      };
     }
+  },
+  created() {
+    // Log job object when card is created to check its contents
+    // console.log('JobCard created with job:', JSON.parse(JSON.stringify(this.job)));
   },
   methods: {
     truncateDescription(text, length) {
