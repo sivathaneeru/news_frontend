@@ -153,7 +153,7 @@ export default {
     this.fetchCompanyData();
   },
   watch: {
-    companyId(newId) {
+     companyId() { // newId parameter removed as it was unused
       // Refetch if the companyId prop changes (e.g., navigating between company profiles)
       this.fetchCompanyData();
     },

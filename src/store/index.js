@@ -58,6 +58,10 @@ const getters = {
     return state.currentCompany;
   },
   getCurrentCompanyJobs: () => {
+    // Ensure currentCompanyJobs is iterable before spreading
+    if (!state.currentCompanyJobs || !Array.isArray(state.currentCompanyJobs)) {
+      return []; // Return empty array if not iterable
+    }
     // Sort by featured status first (premium), then by datePosted
     return [...state.currentCompanyJobs].sort((a, b) => {
       if (a.isFeatured && !b.isFeatured) return -1;
