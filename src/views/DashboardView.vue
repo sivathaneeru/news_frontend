@@ -104,36 +104,31 @@ export default {
   },
   data() {
     return {
-      // jobPostings: [], // Will be a computed property
-      loading: false,
+      // jobPostings: [], // Will be a computed property from store
+      // loading: false, // Will use isLoadingJobs from store
       selectedJob: null,
     };
   },
   computed: {
     currentUser() {
-      return this.$store.getters.currentUser(); // Getter usage is fine
+      return this.$store.getters.currentUser();
     },
     isAdmin() {
-      return this.$store.getters.isAdmin(); // Getter usage is fine
+      return this.$store.getters.isAdmin();
     },
     jobPostings() {
-      // Reactive source from store's state via getter
       return this.$store.getters.allJobPostings();
+    },
+    loading() { // Renamed from isLoading to match template variable
+      return this.$store.getters.isLoadingJobs();
     }
   },
   methods: {
-    // fetchJobPostings is no longer needed as jobPostings is a computed property
-    // However, if there was an actual API call, it might still be here.
-    // For this dummy data, computed is cleaner.
-    // Initial load can be simulated by just accessing computed prop.
-    // If loading state is still desired for initial render:
-    simulateInitialLoad() {
-      this.loading = true;
-      setTimeout(() => {
-        // Data is already available via computed property this.jobPostings
-        this.loading = false;
-      }, 500); // Simulate delay
+    fetchJobs() { // Method to dispatch the action
+      this.$store.dispatch('fetchJobPostings');
     },
+    // simulateInitialLoad() { // Replaced by fetchJobs and store's loading state
+    // },
     handleViewDetails(job) {
       this.selectedJob = job;
       // Ensure modal instance is available if controlling via JS
@@ -184,14 +179,29 @@ export default {
     }
   },
   created() {
-    // this.fetchJobPostings(); // Replaced by computed property and simulateInitialLoad
-    this.simulateInitialLoad(); // Call this if loading spinner simulation is desired
+    // this.simulateInitialLoad(); // Replaced by store's fetchJobPostings action, called in store's init or here
+    // If jobs are not fetched on store initialization, fetch them here.
+    // Assuming store's `actions.fetchJobPostings()` is called on store init, so not strictly needed here
+    // unless a refresh on component creation is desired.
+    // For clarity, we can call it to ensure data is loaded/refreshed when component is created.
+    this.fetchJobs();
   },
   mounted() {
     // Modal instance logic for jobDetailsModal remains the same,
     // ensure window.bootstrap.Modal is used if it was missed here.
     // The previous changes for bootstrap.Modal were specific to JobForm, SubUserForm.
     // It was correctly updated in DashboardView.vue in a previous step for this file.
+    const modalElement = document.getElementById('jobDetailsModal');
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', () => {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+        // Additionally, ensure body overflow is reset if Bootstrap doesn't handle it
+        document.body.style.overflow = '';
+      });
+    }
   },
 };
 </script>
